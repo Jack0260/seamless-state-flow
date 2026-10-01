@@ -1,3 +1,4 @@
+import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 
 export type NodeStatus = "synced" | "migrating" | "lagging" | "failed" | "rolled_back";
@@ -50,7 +51,8 @@ interface Api {
   enqueue: (n?: number) => void; clearCommitted: () => void; clearLogs: () => void;
   setFaultRate: (r: number) => void; bumpTarget: () => void;
 }
-const Ctx = createContext<Api | null>(null);
+const g = globalThis as unknown as { __dsmCtx?: React.Context<Api | null> };
+const Ctx = g.__dsmCtx ?? (g.__dsmCtx = createContext<Api | null>(null));
 
 export function MigratorProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<MigratorState>(seedState);
