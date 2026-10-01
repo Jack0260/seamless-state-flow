@@ -72,7 +72,7 @@ export function Btn({ variant = "default", className, ...p }: React.ButtonHTMLAt
   return <button {...p} className={cn("inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition disabled:pointer-events-none disabled:opacity-40", v, className)} />;
 }
 
-export function Stat({ label, value, tone }: { label: string; value: ReactNode; tone?: string }) {
+export function Stat({ label, value, tone }: { label: string; value: ReactNode; tone?: string | undefined }) {
   return (
     <div className="panel p-4">
       <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
