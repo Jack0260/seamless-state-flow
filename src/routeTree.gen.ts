@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LogsRouteImport } from './routes/logs'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as GuidesZeroDowntimeMigrationRouteImport } from './routes/guides.zero-downtime-migration'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,26 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesZeroDowntimeMigrationRoute =
+  GuidesZeroDowntimeMigrationRouteImport.update({
+    id: '/guides/zero-downtime-migration',
+    path: '/guides/zero-downtime-migration',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/logs': typeof LogsRoute
   '/queue': typeof QueueRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/guides/zero-downtime-migration': typeof GuidesZeroDowntimeMigrationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/logs': typeof LogsRoute
   '/queue': typeof QueueRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/guides/zero-downtime-migration': typeof GuidesZeroDowntimeMigrationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +62,30 @@ export interface FileRoutesById {
   '/logs': typeof LogsRoute
   '/queue': typeof QueueRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/guides/zero-downtime-migration': typeof GuidesZeroDowntimeMigrationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/logs' | '/queue' | '/sitemap.xml'
+  fullPaths:
+    | '/'
+    | '/logs'
+    | '/queue'
+    | '/sitemap.xml'
+    | '/guides/zero-downtime-migration'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/logs' | '/queue' | '/sitemap.xml'
-  id: '__root__' | '/' | '/logs' | '/queue' | '/sitemap.xml'
+  to:
+    | '/'
+    | '/logs'
+    | '/queue'
+    | '/sitemap.xml'
+    | '/guides/zero-downtime-migration'
+  id:
+    | '__root__'
+    | '/'
+    | '/logs'
+    | '/queue'
+    | '/sitemap.xml'
+    | '/guides/zero-downtime-migration'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +93,7 @@ export interface RootRouteChildren {
   LogsRoute: typeof LogsRoute
   QueueRoute: typeof QueueRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  GuidesZeroDowntimeMigrationRoute: typeof GuidesZeroDowntimeMigrationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/zero-downtime-migration': {
+      id: '/guides/zero-downtime-migration'
+      path: '/guides/zero-downtime-migration'
+      fullPath: '/guides/zero-downtime-migration'
+      preLoaderRoute: typeof GuidesZeroDowntimeMigrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   LogsRoute: LogsRoute,
   QueueRoute: QueueRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  GuidesZeroDowntimeMigrationRoute: GuidesZeroDowntimeMigrationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
