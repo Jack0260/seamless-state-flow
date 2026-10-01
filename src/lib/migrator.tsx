@@ -1,20 +1,5 @@
-import type React from "react";
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-
-export type NodeStatus = "synced" | "migrating" | "lagging" | "failed" | "rolled_back";
-export interface TenantNode {
-  id: string; name: string; region: string; version: number;
-  status: NodeStatus; progress: number; latency: number;
-}
-export type TxStatus = "pending" | "applying" | "committed" | "conflict" | "aborted";
-export interface Tx { id: string; tenant: string; op: string; status: TxStatus; attempts: number; ts: number }
-export type LogLevel = "info" | "warn" | "error" | "success";
-export interface LogEntry { id: string; ts: number; level: LogLevel; node?: string | undefined; msg: string }
-
-export interface MigratorState {
-  targetVersion: number; running: boolean; faultRate: number;
-  nodes: TenantNode[]; queue: Tx[]; logs: LogEntry[]; committed: number; conflicts: number;
-}
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { MigratorContext, type Api, type LogEntry, type LogLevel, type MigratorState, type NodeStatus, type TxStatus } from "./migrator-store";
 
 const KEY = "dsm-state-v1";
 const REGIONS = ["us-east-1", "us-west-2", "eu-central-1", "ap-south-1", "ap-northeast-1", "sa-east-1"];
@@ -27,7 +12,7 @@ function pick<T>(arr: readonly T[], i?: number): T {
 }
 const uid = (p: string) => `${p}-${Date.now().toString(36)}-${(seq++).toString(36)}`;
 
-export function seedState(): MigratorState {
+function seedState(): MigratorState {
   return {
     targetVersion: 42, running: false, faultRate: 0.02, committed: 0, conflicts: 0,
     nodes: NAMES.map((n, i) => ({
@@ -43,16 +28,6 @@ function isValid(s: unknown): s is MigratorState {
   const x = s as MigratorState;
   return !!x && Array.isArray(x.nodes) && Array.isArray(x.queue) && Array.isArray(x.logs) && typeof x.targetVersion === "number";
 }
-
-interface Api {
-  state: MigratorState;
-  start: () => void; pause: () => void; reset: () => void;
-  rollbackNode: (id: string) => void; rollbackAll: () => void; retryNode: (id: string) => void;
-  enqueue: (n?: number) => void; clearCommitted: () => void; clearLogs: () => void;
-  setFaultRate: (r: number) => void; bumpTarget: () => void;
-}
-const g = globalThis as unknown as { __dsmCtx?: React.Context<Api | null> };
-const Ctx = g.__dsmCtx ?? (g.__dsmCtx = createContext<Api | null>(null));
 
 export function MigratorProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<MigratorState>(seedState);
@@ -203,11 +178,5 @@ export function MigratorProvider({ children }: { children: ReactNode }) {
     })),
   };
 
-  return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
-}
-
-export function useMigrator() {
-  const c = useContext(Ctx);
-  if (!c) throw new Error("useMigrator must be used inside MigratorProvider");
-  return c;
+  return <MigratorContext.Provider value={api}>{children}</MigratorContext.Provider>;
 }

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, Btn, Stat } from "@/components/AppShell";
-import { useMigrator, type NodeStatus } from "@/lib/migrator";
+import { useMigrator, type NodeStatus } from "@/lib/migrator-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
