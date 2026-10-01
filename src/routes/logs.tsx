@@ -5,6 +5,7 @@ import { useMigrator, type LogLevel } from "@/lib/migrator-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/logs")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Live Rollback Logs — Distributed State Migrator" },

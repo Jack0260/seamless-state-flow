@@ -4,6 +4,7 @@ import { useMigrator, type NodeStatus } from "@/lib/migrator-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Node Sync Dashboard — Distributed State Migrator" },
@@ -46,6 +47,7 @@ function Dashboard() {
         </div>
       </div>
 
+      <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">Cluster health</h2>
       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Converged" value={`${synced}/${state.nodes.length}`} tone="text-success" />
         <Stat label="Failed" value={failed} tone={failed ? "text-destructive" : undefined} />
@@ -57,6 +59,7 @@ function Dashboard() {
         </div>
       </div>
 
+      <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">Tenant nodes</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {state.nodes.map((n) => (
           <div key={n.id} className={cn("panel p-4 transition-shadow", n.status === "failed" && "border-destructive/60")}>

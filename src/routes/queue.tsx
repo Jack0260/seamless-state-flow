@@ -4,6 +4,7 @@ import { useMigrator, type TxStatus } from "@/lib/migrator-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/queue")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Lock-free Transaction Queue — Distributed State Migrator" },
@@ -37,6 +38,7 @@ function QueuePage() {
           <Btn variant="ghost" onClick={clearCommitted}>Clear finished</Btn>
         </div>
       </div>
+      <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">Queue throughput</h2>
       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-5">
         <Stat label="Pending" value={count("pending")} />
         <Stat label="Applying" value={count("applying")} tone="text-info" />
@@ -47,6 +49,7 @@ function QueuePage() {
       {!state.running && count("pending") > 0 && (
         <p className="mb-3 rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-sm">Processor is idle — resume processing to drain the queue.</p>
       )}
+      <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">Recent transactions</h2>
       <div className="panel overflow-x-auto">
         <table className="w-full font-mono text-xs">
           <thead className="border-b text-left text-muted-foreground">
