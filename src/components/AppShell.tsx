@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { useTheme, type ThemePref } from "@/lib/theme";
-import { useMigrator } from "@/lib/migrator";
+import { useTheme, type ThemePref } from "@/lib/theme-store";
+import { useMigrator } from "@/lib/migrator-store";
 import { cn } from "@/lib/utils";
 
 const NAV = [

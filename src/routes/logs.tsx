@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppShell, Btn } from "@/components/AppShell";
-import { useMigrator, type LogLevel } from "@/lib/migrator";
+import { useMigrator, type LogLevel } from "@/lib/migrator-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/logs")({

@@ -1,11 +1,7 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
-export type ThemePref = "light" | "dark" | "system";
+import { ThemeContext, type ThemePref } from "./theme-store";
 const KEY = "dsm-theme";
-const Ctx = createContext<{ theme: ThemePref; setTheme: (t: ThemePref) => void }>({
-  theme: "system",
-  setTheme: () => {},
-});
 
 function apply(pref: ThemePref) {
   const dark =
@@ -37,7 +33,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem(KEY, t); } catch {}
   };
 
-  return <Ctx.Provider value={{ theme, setTheme }}>{children}</Ctx.Provider>;
+  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }
 
-export const useTheme = () => useContext(Ctx);
