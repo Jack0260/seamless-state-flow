@@ -8,7 +8,7 @@ export interface TenantNode {
 export type TxStatus = "pending" | "applying" | "committed" | "conflict" | "aborted";
 export interface Tx { id: string; tenant: string; op: string; status: TxStatus; attempts: number; ts: number }
 export type LogLevel = "info" | "warn" | "error" | "success";
-export interface LogEntry { id: string; ts: number; level: LogLevel; node?: string; msg: string }
+export interface LogEntry { id: string; ts: number; level: LogLevel; node?: string | undefined; msg: string }
 
 export interface MigratorState {
   targetVersion: number; running: boolean; faultRate: number;
@@ -21,13 +21,16 @@ const NAMES = ["acme", "globex", "initech", "umbrella", "hooli", "stark", "wayne
 const OPS = ["ALTER TABLE ADD COLUMN", "CREATE INDEX CONCURRENTLY", "BACKFILL batch", "UPDATE tenant_cfg", "INSERT audit_row", "DROP shadow_col"];
 
 let seq = 0;
+function pick<T>(arr: readonly T[], i?: number): T {
+  return arr[(i ?? Math.floor(Math.random() * arr.length)) % arr.length] as T;
+}
 const uid = (p: string) => `${p}-${Date.now().toString(36)}-${(seq++).toString(36)}`;
 
 export function seedState(): MigratorState {
   return {
     targetVersion: 42, running: false, faultRate: 0.02, committed: 0, conflicts: 0,
     nodes: NAMES.map((n, i) => ({
-      id: `node-${i + 1}`, name: `tenant_${n}`, region: REGIONS[i % REGIONS.length],
+      id: `node-${i + 1}`, name: `tenant_${n}`, region: pick(REGIONS, i),
       version: 41, status: "synced", progress: 100, latency: 12 + ((i * 7) % 30),
     })),
     queue: [],
@@ -124,8 +127,8 @@ export function MigratorProvider({ children }: { children: ReactNode }) {
 
         // Background traffic
         if (Math.random() < 0.6) {
-          const n = nodes[Math.floor(Math.random() * nodes.length)];
-          queue.push({ id: uid("tx"), tenant: n.name, op: OPS[Math.floor(Math.random() * OPS.length)], status: "pending", attempts: 0, ts: Date.now() });
+          const n = pick(nodes);
+          queue.push({ id: uid("tx"), tenant: n.name, op: pick(OPS), status: "pending", attempts: 0, ts: Date.now() });
         }
 
         let running = s.running;
@@ -182,8 +185,8 @@ export function MigratorProvider({ children }: { children: ReactNode }) {
     enqueue: (count = 10) => setState((s) => ({
       ...s,
       queue: [...s.queue, ...Array.from({ length: count }, () => {
-        const n = s.nodes[Math.floor(Math.random() * s.nodes.length)];
-        return { id: uid("tx"), tenant: n.name, op: OPS[Math.floor(Math.random() * OPS.length)], status: "pending" as TxStatus, attempts: 0, ts: Date.now() };
+        const n = pick(s.nodes);
+        return { id: uid("tx"), tenant: n.name, op: pick(OPS), status: "pending" as TxStatus, attempts: 0, ts: Date.now() };
       })].slice(-200),
       running: s.running,
       logs: log(s, "info", `Injected ${count} synthetic transactions into queue`),
