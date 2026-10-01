@@ -8,6 +8,7 @@ const NAV = [
   { to: "/", label: "Node Sync" },
   { to: "/queue", label: "Tx Queue" },
   { to: "/logs", label: "Rollback Logs" },
+  { to: "/guides/zero-downtime-migration", label: "Guide" },
 ] as const;
 
 function ThemeSwitcher() {
